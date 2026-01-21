@@ -31,3 +31,47 @@ summary:focus-visible {
   outline: 2px solid rgba(190,171,156,0.6);
   border-radius: 12px;
 }
+
+/* =========================
+   AJUSTE AUTOMÁTICO MOBILE
+   ========================= */
+
+/* Quando a tela for pequena (celular) */
+@media (max-width: 768px) {
+
+  /* Títulos menores */
+  h1 {
+    font-size: 32px !important;
+    line-height: 1.2 !important;
+  }
+
+  h2 {
+    font-size: 26px !important;
+  }
+
+  /* Espaçamento lateral */
+  section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Botões mais confortáveis */
+  a {
+    font-size: 15px;
+  }
+}
+@media (max-width: 900px) {
+  header nav {
+    display: none !important;
+  }
+
+  header div[style*="ctaDesktop"] {
+    display: none !important;
+  }
+
+  header button {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+}

@@ -4,7 +4,7 @@ import instagramIcon from "../assets/inst.png";
 export default function Hero() {
   return (
     <section id="inicio" style={styles.section}>
-      <div style={styles.container}>
+      <div style={{ ...styles.container, ...(window.innerWidth <= 900 ? styles.containerMobile : {}) }}>
         {/* Esquerda */}
         <div style={styles.left}>
           <p style={styles.kicker}>Psicoterapia online • adultos e idosos</p>
