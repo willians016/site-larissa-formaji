@@ -1,0 +1,33 @@
+/* Reset leve */
+* {
+  box-sizing: border-box;
+}
+
+/* Suaviza rolagem dos links do menu */
+html {
+  scroll-behavior: smooth;
+}
+
+/* FAQ – animação elegante */
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details summary span:last-child {
+  transition: transform 0.25s ease;
+}
+
+details[open] summary span:last-child {
+  transform: rotate(180deg);
+}
+
+/* Destaque sutil ao abrir */
+details[open] {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.08);
+}
+
+/* Melhor foco ao navegar por teclado */
+summary:focus-visible {
+  outline: 2px solid rgba(190,171,156,0.6);
+  border-radius: 12px;
+}
