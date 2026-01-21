@@ -1,6 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+function useIsMobile(breakpoint = 900) {
+  const mq = useMemo(
+    () => window.matchMedia(`(max-width: ${breakpoint}px)`),
+    [breakpoint]
+  );
+  const [isMobile, setIsMobile] = useState(mq.matches);
+
+  useEffect(() => {
+    const update = () => setIsMobile(mq.matches);
+
+    // Resize normal + orientation
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    // iOS Safari: quando a barra do navegador muda/zoom “assenta”
+    window.visualViewport?.addEventListener("resize", update);
+
+    // matchMedia change
+    if (mq.addEventListener) mq.addEventListener("change", update);
+    else mq.addListener(update);
+
+    update();
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+      window.visualViewport?.removeEventListener("resize", update);
+
+      if (mq.removeEventListener) mq.removeEventListener("change", update);
+      else mq.removeListener(update);
+    };
+  }, [mq]);
+
+  return isMobile;
+}
 
 export default function Header() {
+  const isMobile = useIsMobile(900);
   const [open, setOpen] = useState(false);
 
   const links = [
@@ -22,6 +59,11 @@ export default function Header() {
     };
   }, [open]);
 
+  // se sair do mobile (ex: iPad/rotate), fecha menu
+  useEffect(() => {
+    if (!isMobile && open) setOpen(false);
+  }, [isMobile, open]);
+
   return (
     <header style={styles.header}>
       <div style={styles.container}>
@@ -31,7 +73,7 @@ export default function Header() {
         </a>
 
         {/* NAV DESKTOP */}
-        <nav style={styles.navDesktop}>
+        <nav className="nav-desktop" style={styles.navDesktop}>
           {links.map((link) => (
             <a key={link.href} href={link.href} style={styles.link}>
               {link.label}
@@ -40,7 +82,7 @@ export default function Header() {
         </nav>
 
         {/* CTA DESKTOP */}
-        <div style={styles.ctaDesktop}>
+        <div className="cta-desktop" style={styles.ctaDesktop}>
           <a
             href="https://api.whatsapp.com/send/?phone=5511932514545&text=Ol%C3%A1%21+Gostaria+de+agendar+uma+sess%C3%A3o+de+psicoterapia."
             target="_blank"
@@ -53,6 +95,7 @@ export default function Header() {
 
         {/* BOTÃO MOBILE */}
         <button
+          className="menu-btn"
           style={styles.menuBtn}
           onClick={() => setOpen(true)}
           aria-label="Abrir menu"
@@ -145,9 +188,7 @@ const styles = {
     fontSize: 22,
     color: TEXT,
   },
-  logoAccent: {
-    color: PRIMARY,
-  },
+  logoAccent: { color: PRIMARY },
 
   navDesktop: {
     display: "flex",
@@ -164,9 +205,7 @@ const styles = {
     borderRadius: 999,
   },
 
-  ctaDesktop: {
-    display: "block",
-  },
+  ctaDesktop: { display: "block" },
   ctaBtn: {
     textDecoration: "none",
     background: PRIMARY,
@@ -180,7 +219,7 @@ const styles = {
   },
 
   menuBtn: {
-    display: "none",
+    display: "none", // aparece no mobile via CSS (index.css)
     fontSize: 22,
     background: "transparent",
     border: "1px solid rgba(0,0,0,0.10)",
@@ -194,20 +233,25 @@ const styles = {
   mobileOverlay: {
     position: "fixed",
     inset: 0,
+    height: "100dvh", // iOS friendly
     background: "rgba(0,0,0,0.35)",
     display: "flex",
     justifyContent: "flex-end",
   },
   mobileMenu: {
-    width: "86%",
-    maxWidth: 360,
-    height: "100%",
+    position: "fixed",
+    top: 0,
+    right: 0,
+    height: "100dvh",
+    width: "min(86vw, 360px)",
     background: "#fff",
     padding: 18,
     boxShadow: "-18px 0 40px rgba(0,0,0,0.15)",
     display: "flex",
     flexDirection: "column",
     gap: 14,
+    overflowY: "auto",
+    WebkitOverflowScrolling: "touch",
   },
   mobileHeader: {
     display: "flex",
@@ -229,11 +273,13 @@ const styles = {
     width: 40,
     height: 40,
     cursor: "pointer",
+    color: TEXT,
   },
   mobileLinks: {
     display: "flex",
     flexDirection: "column",
-    gap: 8,
+    gap: 10,
+    paddingTop: 6,
   },
   mobileLink: {
     textDecoration: "none",
@@ -244,9 +290,10 @@ const styles = {
     padding: "12px",
     borderRadius: 14,
     background: "rgba(190,171,156,0.12)",
+    border: "1px solid rgba(0,0,0,0.06)",
   },
   mobileCta: {
-    marginTop: 6,
+    marginTop: 8,
     textDecoration: "none",
     background: PRIMARY,
     color: "#fff",
@@ -255,8 +302,10 @@ const styles = {
     fontFamily: "'DM Sans', sans-serif",
     fontWeight: 800,
     textAlign: "center",
+    boxShadow: "0 14px 24px rgba(0,0,0,0.12)",
   },
   mobileHint: {
+    marginTop: 6,
     fontFamily: "'DM Sans', sans-serif",
     fontSize: 13,
     color: MUTED,

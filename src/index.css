@@ -75,3 +75,24 @@ summary:focus-visible {
     justify-content: center;
   }
 }
+/* Evita “auto zoom”/reflow estranho no iOS e melhora cálculo do viewport */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Mobile header behaviour */
+@media (max-width: 900px) {
+  .nav-desktop {
+    display: none !important;
+  }
+
+  .cta-desktop {
+    display: none !important;
+  }
+
+  .menu-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+}
