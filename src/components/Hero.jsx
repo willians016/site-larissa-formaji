@@ -296,6 +296,7 @@ const styles = {
     height: "92%",
     borderRadius: "50%",
     objectFit: "cover",
+    objectPosition: "center 15%"
   },
 
   /* Mobile */
@@ -362,3 +363,4 @@ const styles = {
     borderWidth: 6,
   },
 };
+
